@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Phone, ArrowDown } from "lucide-react";
+import { Github, Linkedin, Mail, Phone, ArrowDown, Download } from "lucide-react";
 
 const HeroSection = () => {
   return (
@@ -29,6 +29,15 @@ const HeroSection = () => {
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
             Building scalable backends & beautiful frontends. Passionate about clean code, system design, and crafting great user experiences.
           </p>
+
+          <a
+            href="/ChiruChandan_Resume.pdf"
+            download
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg font-heading font-semibold bg-primary text-primary-foreground hover:opacity-90 transition-opacity mb-8"
+          >
+            <Download className="w-4 h-4" />
+            Download Resume
+          </a>
 
           <div className="flex items-center justify-center gap-4 mb-12">
             <a href="https://github.com/Chiru-5" target="_blank" rel="noopener noreferrer"
