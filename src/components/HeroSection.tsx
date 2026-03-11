@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Github, Linkedin, Mail, Phone, ArrowDown } from "lucide-react";
+import { Github, Linkedin, Mail, Phone, ArrowDown, Download } from "lucide-react";
 
 const HeroSection = () => {
   return (
