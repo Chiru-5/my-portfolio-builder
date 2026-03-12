@@ -54,6 +54,10 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+          <button onClick={toggle} className="flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-primary transition-colors font-mono">
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </button>
         </div>
       )}
     </nav>
