@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Sun, Moon } from "lucide-react";
+import { useTheme } from "./ThemeProvider";
 
 const navLinks = [
   { label: "Skills", href: "#skills" },
@@ -11,6 +12,7 @@ const navLinks = [
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { theme, toggle } = useTheme();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -32,6 +34,9 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+          <button onClick={toggle} className="p-2 rounded-lg border border-border hover:border-primary/50 hover:text-primary transition-all text-muted-foreground">
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
         {/* Mobile toggle */}
@@ -49,6 +54,10 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+          <button onClick={toggle} className="flex items-center gap-2 py-2 text-sm text-muted-foreground hover:text-primary transition-colors font-mono">
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === "dark" ? "Light Mode" : "Dark Mode"}
+          </button>
         </div>
       )}
     </nav>
