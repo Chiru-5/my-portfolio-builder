@@ -33,6 +33,9 @@ const Navbar = () => {
               {link.label}
             </a>
           ))}
+          <button onClick={toggle} className="p-2 rounded-lg border border-border hover:border-primary/50 hover:text-primary transition-all text-muted-foreground">
+            {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+          </button>
         </div>
 
         {/* Mobile toggle */}
