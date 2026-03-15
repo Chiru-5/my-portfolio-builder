@@ -120,5 +120,15 @@
     background: var(--gradient-card);
     box-shadow: var(--shadow-card);
     border: 1px solid hsl(220 14% 18%);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
   }
+
+  .card-glass:hover {
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
 }

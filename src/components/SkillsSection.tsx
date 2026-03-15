@@ -7,6 +7,26 @@ const skills = {
   "Soft Skills": ["Collaboration", "Adaptability", "Flexibility", "Attention to Detail"],
 };
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] },
+  },
+};
+
+const chipVariants = {
+  hidden: { opacity: 0, scale: 0.8 },
+  visible: { opacity: 1, scale: 1 },
+};
+
 const SkillsSection = () => {
   return (
     <section id="skills" className="py-24 px-4">
@@ -21,27 +41,42 @@ const SkillsSection = () => {
           <h2 className="font-heading text-3xl md:text-4xl font-bold mb-12">Skills & Technologies</h2>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {Object.entries(skills).map(([category, items], i) => (
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true }}
+          className="grid md:grid-cols-2 gap-6"
+        >
+          {Object.entries(skills).map(([category, items]) => (
             <motion.div
               key={category}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="card-glass rounded-xl p-6"
+              variants={cardVariants}
+              whileHover={{ y: -4 }}
+              className="card-glass rounded-xl p-6 hover:border-primary/30 transition-colors duration-300"
             >
               <h3 className="font-heading font-semibold text-lg mb-4 text-primary">{category}</h3>
-              <div className="flex flex-wrap gap-2">
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                className="flex flex-wrap gap-2"
+              >
                 {items.map((skill) => (
-                  <span key={skill} className="px-3 py-1.5 text-sm font-mono rounded-md bg-secondary border border-border text-secondary-foreground">
+                  <motion.span
+                    key={skill}
+                    variants={chipVariants}
+                    whileHover={{ scale: 1.08, y: -2 }}
+                    className="px-3 py-1.5 text-sm font-mono rounded-md bg-secondary border border-border text-secondary-foreground cursor-default"
+                  >
                     {skill}
-                  </span>
+                  </motion.span>
                 ))}
-              </div>
+              </motion.div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
