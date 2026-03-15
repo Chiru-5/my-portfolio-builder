@@ -65,32 +65,41 @@ const ProjectsSection = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: i * 0.1, duration: 0.5 }}
-              className="card-glass rounded-xl p-6 md:p-8 group hover:border-primary/30 transition-all duration-500"
+              className="card-glass rounded-xl overflow-hidden group hover:border-primary/30 transition-all duration-500"
             >
-              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-2 mb-4">
-                <div>
-                  <h3 className="font-heading text-xl font-semibold group-hover:text-primary transition-colors">
-                    {project.title}
-                  </h3>
-                  <p className="text-muted-foreground text-sm font-mono">{project.period}</p>
-                </div>
-                <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
+              <div className="aspect-video overflow-hidden">
+                <img
+                  src={project.image}
+                  alt={project.title}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                />
               </div>
-              <p className="text-secondary-foreground mb-4">{project.description}</p>
-              <ul className="space-y-1 mb-5">
-                {project.highlights.map((h) => (
-                  <li key={h} className="text-muted-foreground text-sm flex items-start gap-2">
-                    <span className="text-primary mt-1.5 text-xs">▸</span>
-                    {h}
-                  </li>
-                ))}
-              </ul>
-              <div className="flex flex-wrap gap-2">
-                {project.tech.map((t) => (
-                  <span key={t} className="px-2.5 py-1 text-xs font-mono rounded bg-primary/10 text-primary border border-primary/20">
-                    {t}
-                  </span>
-                ))}
+              <div className="p-6 md:p-8">
+                <div className="flex items-start justify-between gap-2 mb-4">
+                  <div>
+                    <h3 className="font-heading text-xl font-semibold group-hover:text-primary transition-colors">
+                      {project.title}
+                    </h3>
+                    <p className="text-muted-foreground text-sm font-mono">{project.period}</p>
+                  </div>
+                  <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors shrink-0 mt-1" />
+                </div>
+                <p className="text-secondary-foreground mb-4">{project.description}</p>
+                <ul className="space-y-1 mb-5">
+                  {project.highlights.map((h) => (
+                    <li key={h} className="text-muted-foreground text-sm flex items-start gap-2">
+                      <span className="text-primary mt-1.5 text-xs">▸</span>
+                      {h}
+                    </li>
+                  ))}
+                </ul>
+                <div className="flex flex-wrap gap-2">
+                  {project.tech.map((t) => (
+                    <span key={t} className="px-2.5 py-1 text-xs font-mono rounded bg-primary/10 text-primary border border-primary/20">
+                      {t}
+                    </span>
+                  ))}
+                </div>
               </div>
             </motion.div>
           ))}
