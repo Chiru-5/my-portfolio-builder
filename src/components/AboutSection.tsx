@@ -1,5 +1,9 @@
 import { motion } from "framer-motion";
 import { GraduationCap, Award, Heart } from "lucide-react";
+import certPostman from "@/assets/cert-postman.png";
+import certGfgJava from "@/assets/cert-gfg-java.png";
+import certLinux from "@/assets/cert-linux.png";
+import certFreecodecamp from "@/assets/cert-freecodecamp.png";
 
 const education = [
   {
@@ -26,10 +30,10 @@ const education = [
 ];
 
 const certificates = [
-  { title: "Postman API Fundamentals Student Expert", org: "Postman", date: "Mar 2026" },
-  { title: "Java Programming – Self Paced", org: "GFG", date: "Jan 2026" },
-  { title: "Linux Mastery: From Basics to Advance", org: "GFG", date: "Nov 2025" },
-  { title: "Responsive Web Design", org: "FreeCodeCamp", date: "Nov 2023" },
+  { title: "Postman API Fundamentals Student Expert", org: "Postman", date: "Mar 2026", image: certPostman },
+  { title: "Java Programming – Self Paced", org: "GFG", date: "Jan 2026", image: certGfgJava },
+  { title: "Linux Mastery: From Basics to Advance", org: "GFG", date: "Nov 2025", image: certLinux },
+  { title: "Responsive Web Design", org: "FreeCodeCamp", date: "Nov 2023", image: certFreecodecamp },
 ];
 
 const AboutSection = () => {
@@ -89,13 +93,18 @@ const AboutSection = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1, duration: 0.4 }}
-                className="card-glass rounded-xl p-5 flex items-start justify-between gap-3"
+                className="card-glass rounded-xl p-5 flex items-center gap-4"
               >
-                <div>
+                <img
+                  src={cert.image}
+                  alt={cert.org}
+                  className="w-12 h-12 object-contain rounded-lg shrink-0"
+                />
+                <div className="flex-1 min-w-0">
                   <h3 className="font-heading font-medium text-sm">{cert.title}</h3>
                   <p className="text-muted-foreground text-xs font-mono mt-1">{cert.org}</p>
                 </div>
-                <span className="text-primary text-xs font-mono whitespace-nowrap">{cert.date}</span>
+                <span className="text-primary text-xs font-mono whitespace-nowrap shrink-0">{cert.date}</span>
               </motion.div>
             ))}
           </div>
