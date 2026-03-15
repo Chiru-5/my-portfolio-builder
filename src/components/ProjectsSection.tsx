@@ -1,10 +1,14 @@
 import { motion } from "framer-motion";
 import { ExternalLink } from "lucide-react";
+import ecommerceImg from "@/assets/project-ecommerce.jpg";
+import lawezyImg from "@/assets/project-lawezy.jpg";
+import cpuImg from "@/assets/project-cpu-scheduler.jpg";
 
 const projects = [
   {
     title: "E-Commerce Platform Backend",
     period: "Nov 2025 – Dec 2025",
+    image: ecommerceImg,
     description: "Scalable backend for an E-Commerce platform enabling management of customers, products, carts, and orders with layered architecture.",
     highlights: [
       "RESTful services with Spring Data JPA & Hibernate",
@@ -16,6 +20,7 @@ const projects = [
   {
     title: "LawEzy – Legal Help Platform",
     period: "Mar 2025 – Apr 2025",
+    image: lawezyImg,
     description: "Responsive legal-tech web platform connecting clients with legal advisors with real-time interactions.",
     highlights: [
       "Real-time chat & document upload",
@@ -27,6 +32,7 @@ const projects = [
   {
     title: "CPU Scheduler Simulator",
     period: "Mar 2025 – Apr 2025",
+    image: cpuImg,
     description: "Interactive CPU scheduling simulator with real-time Gantt chart visualizations for multiple scheduling algorithms.",
     highlights: [
       "Multiple scheduling algorithm simulation",
