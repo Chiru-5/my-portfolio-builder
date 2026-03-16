@@ -1,5 +1,20 @@
 import { motion } from "framer-motion";
 
+const skillIcons: Record<string, string> = {
+  Java: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
+  "C++": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+  JavaScript: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+  C: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg",
+  "HTML & CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+  Spring: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
+  "Spring Boot": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
+  Maven: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/maven/maven-original.svg",
+  Postman: "https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg",
+  MySQL: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+  GitHub: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+  Figma: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+};
+
 const skills = {
   Languages: ["Java", "C++", "JavaScript", "C"],
   Frameworks: ["HTML & CSS", "Spring", "Spring Boot"],
@@ -61,15 +76,23 @@ const SkillsSection = () => {
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
-                className="flex flex-wrap gap-2"
+                className="flex flex-wrap gap-3"
               >
                 {items.map((skill) => (
                   <motion.span
                     key={skill}
                     variants={chipVariants}
                     whileHover={{ scale: 1.08, y: -2 }}
-                    className="px-3 py-1.5 text-sm font-mono rounded-md bg-secondary border border-border text-secondary-foreground cursor-default"
+                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-mono rounded-md bg-secondary border border-border text-secondary-foreground cursor-default"
                   >
+                    {skillIcons[skill] && (
+                      <img
+                        src={skillIcons[skill]}
+                        alt={skill}
+                        className="w-5 h-5 object-contain"
+                        loading="lazy"
+                      />
+                    )}
                     {skill}
                   </motion.span>
                 ))}

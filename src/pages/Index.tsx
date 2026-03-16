@@ -4,10 +4,12 @@ import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import AboutSection from "@/components/AboutSection";
 import ContactSection from "@/components/ContactSection";
+import CustomCursor from "@/components/CustomCursor";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background cursor-none">
+      <CustomCursor />
       <Navbar />
       <HeroSection />
       <SkillsSection />
