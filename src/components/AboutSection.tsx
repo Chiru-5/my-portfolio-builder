@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Award, Heart, ExternalLink } from "lucide-react";
-import certPostman from "@/assets/cert-postman.png";
-import certGfgJava from "@/assets/cert-gfg-java.png";
-import certLinux from "@/assets/cert-linux.png";
-import certFreecodecamp from "@/assets/cert-freecodecamp.png";
+import { useRef } from "react";
+import { GraduationCap, Award, Heart, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 
 const education = [
   {
