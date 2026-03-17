@@ -1,9 +1,6 @@
 import { motion } from "framer-motion";
-import { GraduationCap, Award, Heart, ExternalLink } from "lucide-react";
-import certPostman from "@/assets/cert-postman.png";
-import certGfgJava from "@/assets/cert-gfg-java.png";
-import certLinux from "@/assets/cert-linux.png";
-import certFreecodecamp from "@/assets/cert-freecodecamp.png";
+import { useRef } from "react";
+import { GraduationCap, Award, Heart, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
 
 const education = [
   {
@@ -33,29 +30,25 @@ const certificates = [
   {
     title: "Postman API Fundamentals Student Expert",
     org: "Postman",
-    date: "Mar 2026",
-    image: certPostman,
+    date: "2026",
     link: "https://badges.parchment.com/public/assertions/-fuKeGRsQZ6VBSJXFOg9xg?identity__email=mandavallichiruchandan@gmail.com",
   },
   {
     title: "Java Programming – Self Paced",
     org: "GFG",
-    date: "Jan 2026",
-    image: certGfgJava,
+    date: "2026",
     link: "https://media.geeksforgeeks.org/courses/certificates/7121f6c1e5551fc97977e5384d9b0af1.pdf",
   },
   {
     title: "Linux Mastery: From Basics to Advance",
     org: "GFG",
-    date: "Nov 2025",
-    image: certLinux,
+    date: "2025",
     link: "https://media.geeksforgeeks.org/courses/certificates/b7c2dacc3e86a89ea15b03480d390ca7.pdf",
   },
   {
     title: "Responsive Web Design",
     org: "FreeCodeCamp",
-    date: "Nov 2023",
-    image: certFreecodecamp,
+    date: "2023",
     link: "https://www.freecodecamp.org/certification/fcc32fefb77-4886-436c-92e3-89f0ed645e38/responsive-web-design",
   },
 ];
@@ -78,6 +71,18 @@ const itemVariants = {
 };
 
 const AboutSection = () => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: "left" | "right") => {
+    if (scrollRef.current) {
+      const scrollAmount = 320;
+      scrollRef.current.scrollBy({
+        left: direction === "left" ? -scrollAmount : scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
   return (
     <section id="about" className="py-24 px-4">
       <div className="container">
@@ -140,41 +145,55 @@ const AboutSection = () => {
             </motion.div>
             <h2 className="font-heading text-3xl md:text-4xl font-bold">Certificates</h2>
           </div>
-          <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-            className="grid md:grid-cols-2 gap-4"
-          >
-            {certificates.map((cert, i) => (
-              <motion.a
-                key={i}
-                href={cert.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                variants={itemVariants}
-                whileHover={{ y: -4, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="card-glass rounded-xl p-5 flex items-center gap-4 group cursor-pointer hover:border-primary/30 transition-colors duration-300"
+          <div className="relative">
+            <div
+              ref={scrollRef}
+              className="flex gap-4 overflow-x-auto scrollbar-hide pb-4 snap-x snap-mandatory"
+              style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+            >
+              {certificates.map((cert, i) => (
+                <motion.a
+                  key={i}
+                  href={cert.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  whileHover={{ y: -6, scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="card-glass rounded-xl p-6 min-w-[280px] md:min-w-[300px] flex-shrink-0 snap-start group cursor-pointer hover:border-primary/30 transition-colors duration-300 flex flex-col justify-between gap-6"
+                >
+                  <Award className="w-8 h-8 text-primary" />
+                  <div>
+                    <h3 className="font-heading font-bold text-base uppercase tracking-wide group-hover:text-primary transition-colors leading-tight">
+                      {cert.title}
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="text-primary text-xs font-mono uppercase tracking-wider">{cert.org}</span>
+                    <span className="text-muted-foreground text-xs font-mono">{cert.date}</span>
+                    <ExternalLink className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors ml-auto" />
+                  </div>
+                </motion.a>
+              ))}
+            </div>
+            <div className="flex justify-center gap-3 mt-6">
+              <button
+                onClick={() => scroll("left")}
+                className="p-2 rounded-full border border-border hover:border-primary/50 hover:text-primary transition-colors"
               >
-                <motion.img
-                  src={cert.image}
-                  alt={cert.org}
-                  className="w-12 h-12 object-contain rounded-lg shrink-0"
-                  whileHover={{ rotate: 6 }}
-                />
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-heading font-medium text-sm group-hover:text-primary transition-colors">{cert.title}</h3>
-                  <p className="text-muted-foreground text-xs font-mono mt-1">{cert.org}</p>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-primary text-xs font-mono whitespace-nowrap">{cert.date}</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
-                </div>
-              </motion.a>
-            ))}
-          </motion.div>
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => scroll("right")}
+                className="p-2 rounded-full border border-border hover:border-primary/50 hover:text-primary transition-colors"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </div>
+          </div>
         </motion.div>
 
         {/* Extra-Curricular */}
