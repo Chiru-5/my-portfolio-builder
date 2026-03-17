@@ -30,29 +30,25 @@ const certificates = [
   {
     title: "Postman API Fundamentals Student Expert",
     org: "Postman",
-    date: "Mar 2026",
-    image: certPostman,
+    date: "2026",
     link: "https://badges.parchment.com/public/assertions/-fuKeGRsQZ6VBSJXFOg9xg?identity__email=mandavallichiruchandan@gmail.com",
   },
   {
     title: "Java Programming – Self Paced",
     org: "GFG",
-    date: "Jan 2026",
-    image: certGfgJava,
+    date: "2026",
     link: "https://media.geeksforgeeks.org/courses/certificates/7121f6c1e5551fc97977e5384d9b0af1.pdf",
   },
   {
     title: "Linux Mastery: From Basics to Advance",
     org: "GFG",
-    date: "Nov 2025",
-    image: certLinux,
+    date: "2025",
     link: "https://media.geeksforgeeks.org/courses/certificates/b7c2dacc3e86a89ea15b03480d390ca7.pdf",
   },
   {
     title: "Responsive Web Design",
     org: "FreeCodeCamp",
-    date: "Nov 2023",
-    image: certFreecodecamp,
+    date: "2023",
     link: "https://www.freecodecamp.org/certification/fcc32fefb77-4886-436c-92e3-89f0ed645e38/responsive-web-design",
   },
 ];
