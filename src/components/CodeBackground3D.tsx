@@ -1,10 +1,24 @@
 import { useEffect, useRef } from "react";
 
 const codeSnippets = [
-  "{ }", "< />", "=>", "( )", "[ ]", "&&", "||",
-  "++", "::", "//", "->", "===", "!=",
-  "let", "fn", "if", "for", "0x", "async", "await",
-  "import", "return", "const", "class", "export",
+  "{ }",
+  "< />",
+  "=>",
+  "( )",
+  "[ ]",
+  "&&",
+  "||",
+  "++",
+  "::",
+  "//",
+  "->",
+  "===",
+  "let",
+  "async",
+  "await",
+  "const",
+  "return",
+  "export",
 ];
 
 interface Particle {
@@ -17,7 +31,7 @@ interface Particle {
   fontSize: number;
   opacity: number;
   rotation: number;
-  rotSpeed: number;
+  rotationSpeed: number;
 }
 
 interface Dot {
@@ -29,149 +43,162 @@ interface Dot {
   size: number;
 }
 
+const phi = (1 + Math.sqrt(5)) / 2;
+const norm = Math.sqrt(1 + phi * phi);
+const geoVertices: [number, number, number][] = [
+  [-1, phi, 0],
+  [1, phi, 0],
+  [-1, -phi, 0],
+  [1, -phi, 0],
+  [0, -1, phi],
+  [0, 1, phi],
+  [0, -1, -phi],
+  [0, 1, -phi],
+  [phi, 0, -1],
+  [phi, 0, 1],
+  [-phi, 0, -1],
+  [-phi, 0, 1],
+].map(([x, y, z]) => [x / norm, y / norm, z / norm]);
+
+const icoEdges: [number, number][] = [
+  [0, 1], [0, 5], [0, 7], [0, 10], [0, 11], [1, 5], [1, 7], [1, 8], [1, 9],
+  [2, 3], [2, 4], [2, 6], [2, 10], [2, 11], [3, 4], [3, 6], [3, 8], [3, 9],
+  [4, 5], [4, 9], [4, 11], [5, 9], [5, 11], [6, 7], [6, 8], [6, 10], [7, 8],
+  [7, 10], [8, 9], [10, 11],
+];
+
+const wrap = (value: number, min: number, max: number) => {
+  if (value < min) return max;
+  if (value > max) return min;
+  return value;
+};
+
 const CodeBackground3D = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    let animId: number;
-    let w = window.innerWidth;
-    let h = window.innerHeight;
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-    const resize = () => {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = w * window.devicePixelRatio;
-      canvas.height = h * window.devicePixelRatio;
-      canvas.style.width = w + "px";
-      canvas.style.height = h + "px";
-      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    let animationFrame = 0;
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    let dpr = 1;
+    let lowPower = width < 768;
+    let particles: Particle[] = [];
+    let dots: Dot[] = [];
+    let sceneTime = 0;
+    let geoCenter = { x: width * 0.78, y: height * 0.34 };
+    let geoRadius = Math.min(width, height) * 0.1;
+
+    const buildScene = () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      lowPower = width < 768;
+      geoCenter = { x: width * 0.78, y: height * 0.34 };
+      geoRadius = Math.min(width, height) * (lowPower ? 0.08 : 0.11);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      const particleCount = lowPower ? 8 : 14;
+      const dotCount = lowPower ? 22 : 38;
+
+      particles = Array.from({ length: particleCount }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        z: Math.random() * 0.5 + 0.6,
+        vx: (Math.random() - 0.5) * 0.18,
+        vy: (Math.random() - 0.5) * 0.14,
+        text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
+        fontSize: 10 + Math.random() * 8,
+        opacity: 0.04 + Math.random() * 0.06,
+        rotation: Math.random() * Math.PI * 2,
+        rotationSpeed: (Math.random() - 0.5) * 0.002,
+      }));
+
+      dots = Array.from({ length: dotCount }, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        z: Math.random(),
+        vx: (Math.random() - 0.5) * 0.1,
+        vy: (Math.random() - 0.5) * 0.1,
+        size: Math.random() * 1.6 + 0.6,
+      }));
     };
-    resize();
-    window.addEventListener("resize", resize);
 
-    // Floating code snippets
-    const particles: Particle[] = Array.from({ length: 22 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      z: Math.random() * 0.5 + 0.5,
-      vx: (Math.random() - 0.5) * 0.3,
-      vy: (Math.random() - 0.5) * 0.2 - 0.1,
-      text: codeSnippets[Math.floor(Math.random() * codeSnippets.length)],
-      fontSize: 12 + Math.random() * 10,
-      opacity: 0.06 + Math.random() * 0.1,
-      rotation: Math.random() * Math.PI * 2,
-      rotSpeed: (Math.random() - 0.5) * 0.005,
-    }));
+    const drawDots = () => {
+      const maxDistance = lowPower ? 86 : 118;
+      const maxDistanceSquared = maxDistance * maxDistance;
 
-    // Small dots
-    const dots: Dot[] = Array.from({ length: 80 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      z: Math.random(),
-      vx: (Math.random() - 0.5) * 0.15,
-      vy: (Math.random() - 0.5) * 0.15,
-      size: Math.random() * 2 + 0.5,
-    }));
-
-    // Wireframe geometry vertices (icosahedron-like)
-    const geoCenter = { x: w * 0.78, y: h * 0.35 };
-    const geoRadius = Math.min(w, h) * 0.12;
-    const geoVertices: [number, number, number][] = [];
-    const phi = (1 + Math.sqrt(5)) / 2;
-    const icoVerts: [number, number, number][] = [
-      [-1, phi, 0], [1, phi, 0], [-1, -phi, 0], [1, -phi, 0],
-      [0, -1, phi], [0, 1, phi], [0, -1, -phi], [0, 1, -phi],
-      [phi, 0, -1], [phi, 0, 1], [-phi, 0, -1], [-phi, 0, 1],
-    ];
-    const norm = Math.sqrt(1 + phi * phi);
-    icoVerts.forEach(([vx, vy, vz]) => {
-      geoVertices.push([vx / norm, vy / norm, vz / norm]);
-    });
-
-    const icoEdges: [number, number][] = [
-      [0,1],[0,5],[0,7],[0,10],[0,11],[1,5],[1,7],[1,8],[1,9],
-      [2,3],[2,4],[2,6],[2,10],[2,11],[3,4],[3,6],[3,8],[3,9],
-      [4,5],[4,9],[4,11],[5,9],[5,11],[6,7],[6,8],[6,10],
-      [7,8],[7,10],[8,9],[10,11],
-    ];
-
-    let time = 0;
-
-    const draw = () => {
-      time += 0.008;
-      ctx.clearRect(0, 0, w, h);
-
-      // Draw dots
-      dots.forEach((d) => {
-        d.x += d.vx;
-        d.y += d.vy;
-        if (d.x < 0) d.x = w;
-        if (d.x > w) d.x = 0;
-        if (d.y < 0) d.y = h;
-        if (d.y > h) d.y = 0;
+      for (const dot of dots) {
+        dot.x = wrap(dot.x + dot.vx, -10, width + 10);
+        dot.y = wrap(dot.y + dot.vy, -10, height + 10);
 
         ctx.beginPath();
-        ctx.arc(d.x, d.y, d.size * d.z, 0, Math.PI * 2);
-        ctx.fillStyle = `hsla(172, 66%, 50%, ${0.08 + d.z * 0.12})`;
+        ctx.arc(dot.x, dot.y, dot.size * (0.75 + dot.z * 0.5), 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(172, 66%, 50%, ${0.05 + dot.z * 0.08})`;
         ctx.fill();
-      });
+      }
 
-      // Draw connecting lines between nearby dots
-      for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
+      for (let i = 0; i < dots.length; i += 1) {
+        for (let j = i + 1; j < dots.length; j += 1) {
           const dx = dots[i].x - dots[j].x;
           const dy = dots[i].y - dots[j].y;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          if (dist < 120) {
+          const distanceSquared = dx * dx + dy * dy;
+
+          if (distanceSquared < maxDistanceSquared) {
+            const strength = 1 - distanceSquared / maxDistanceSquared;
             ctx.beginPath();
             ctx.moveTo(dots[i].x, dots[i].y);
             ctx.lineTo(dots[j].x, dots[j].y);
-            ctx.strokeStyle = `hsla(172, 66%, 50%, ${0.03 * (1 - dist / 120)})`;
-            ctx.lineWidth = 0.5;
+            ctx.strokeStyle = `hsla(172, 66%, 50%, ${strength * 0.035})`;
+            ctx.lineWidth = 0.6;
             ctx.stroke();
           }
         }
       }
+    };
 
-      // Draw code snippets
-      particles.forEach((p) => {
-        p.x += p.vx;
-        p.y += p.vy;
-        p.rotation += p.rotSpeed;
-        if (p.x < -100) p.x = w + 50;
-        if (p.x > w + 100) p.x = -50;
-        if (p.y < -50) p.y = h + 50;
-        if (p.y > h + 50) p.y = -50;
+    const drawCodeParticles = () => {
+      for (const particle of particles) {
+        particle.x = wrap(particle.x + particle.vx, -90, width + 90);
+        particle.y = wrap(particle.y + particle.vy, -50, height + 50);
+        particle.rotation += particle.rotationSpeed;
 
         ctx.save();
-        ctx.translate(p.x, p.y);
-        ctx.rotate(p.rotation);
-        ctx.font = `${p.fontSize * p.z}px "JetBrains Mono", monospace`;
-        ctx.fillStyle = `hsla(172, 66%, 50%, ${p.opacity})`;
+        ctx.translate(particle.x, particle.y);
+        ctx.rotate(particle.rotation);
+        ctx.font = `${particle.fontSize * particle.z}px "JetBrains Mono", monospace`;
+        ctx.fillStyle = `hsla(172, 66%, 50%, ${particle.opacity})`;
         ctx.textAlign = "center";
-        ctx.fillText(p.text, 0, 0);
+        ctx.fillText(particle.text, 0, 0);
         ctx.restore();
-      });
+      }
+    };
 
-      // Draw rotating wireframe icosahedron
-      const cosY = Math.cos(time * 0.6);
-      const sinY = Math.sin(time * 0.6);
-      const cosX = Math.cos(time * 0.4);
-      const sinX = Math.sin(time * 0.4);
+    const drawIcosahedron = () => {
+      const cosY = Math.cos(sceneTime * 0.58);
+      const sinY = Math.sin(sceneTime * 0.58);
+      const cosX = Math.cos(sceneTime * 0.42);
+      const sinX = Math.sin(sceneTime * 0.42);
 
       const projected = geoVertices.map(([vx, vy, vz]) => {
-        // Rotate Y
-        let x1 = vx * cosY - vz * sinY;
-        let z1 = vx * sinY + vz * cosY;
-        // Rotate X
-        let y1 = vy * cosX - z1 * sinX;
-        let z2 = vy * sinX + z1 * cosX;
-        const scale = 1 / (1 + z2 * 0.3);
+        const x1 = vx * cosY - vz * sinY;
+        const z1 = vx * sinY + vz * cosY;
+        const y1 = vy * cosX - z1 * sinX;
+        const z2 = vy * sinX + z1 * cosX;
+        const scale = 1 / (1 + z2 * 0.28);
+
         return {
           x: geoCenter.x + x1 * geoRadius * scale,
           y: geoCenter.y + y1 * geoRadius * scale,
@@ -179,84 +206,124 @@ const CodeBackground3D = () => {
         };
       });
 
-      icoEdges.forEach(([a, b]) => {
-        const pa = projected[a];
-        const pb = projected[b];
+      for (const [a, b] of icoEdges) {
+        const start = projected[a];
+        const end = projected[b];
         ctx.beginPath();
-        ctx.moveTo(pa.x, pa.y);
-        ctx.lineTo(pb.x, pb.y);
-        ctx.strokeStyle = `hsla(172, 66%, 50%, ${0.06 + (pa.z + pb.z) * 0.02})`;
-        ctx.lineWidth = 0.8;
+        ctx.moveTo(start.x, start.y);
+        ctx.lineTo(end.x, end.y);
+        ctx.strokeStyle = `hsla(172, 66%, 50%, ${0.035 + (start.z + end.z + 2) * 0.012})`;
+        ctx.lineWidth = 0.7;
         ctx.stroke();
-      });
+      }
+    };
 
-      // Draw a second wireframe torus on the left
-      const torusCenter = { x: w * 0.2, y: h * 0.7 };
-      const R = Math.min(w, h) * 0.08;
-      const r = R * 0.35;
-      const segments = 16;
-      const rings = 12;
+    const drawTorus = () => {
+      if (lowPower) return;
 
-      for (let i = 0; i < rings; i++) {
-        const theta = (i / rings) * Math.PI * 2;
-        const nextTheta = ((i + 1) / rings) * Math.PI * 2;
-        for (let j = 0; j < segments; j++) {
-          const phi1 = (j / segments) * Math.PI * 2;
-          const phi2 = ((j + 1) / segments) * Math.PI * 2;
+      const torusCenter = { x: width * 0.2, y: height * 0.72 };
+      const outerRadius = Math.min(width, height) * 0.07;
+      const innerRadius = outerRadius * 0.34;
+      const rings = 8;
+      const segments = 10;
 
-          const getPoint = (t: number, p: number) => {
-            let x = (R + r * Math.cos(p)) * Math.cos(t);
-            let y = (R + r * Math.cos(p)) * Math.sin(t);
-            let z = r * Math.sin(p);
-            // Rotate
-            const cx = Math.cos(time * 0.3);
-            const sx = Math.sin(time * 0.3);
-            const cz = Math.cos(time * 0.5);
-            const sz = Math.sin(time * 0.5);
-            const y2 = y * cx - z * sx;
-            const z2 = y * sx + z * cx;
-            const x2 = x * cz - y2 * sz;
-            const y3 = x * sz + y2 * cz;
-            return { x: torusCenter.x + x2, y: torusCenter.y + y3, z: z2 };
-          };
+      const projectPoint = (theta: number, phiValue: number) => {
+        const x = (outerRadius + innerRadius * Math.cos(phiValue)) * Math.cos(theta);
+        const y = (outerRadius + innerRadius * Math.cos(phiValue)) * Math.sin(theta);
+        const z = innerRadius * Math.sin(phiValue);
 
-          const p1 = getPoint(theta, phi1);
-          const p2 = getPoint(theta, phi2);
-          const p3 = getPoint(nextTheta, phi1);
+        const cosA = Math.cos(sceneTime * 0.34);
+        const sinA = Math.sin(sceneTime * 0.34);
+        const cosB = Math.cos(sceneTime * 0.5);
+        const sinB = Math.sin(sceneTime * 0.5);
+
+        const y2 = y * cosA - z * sinA;
+        const z2 = y * sinA + z * cosA;
+        const x2 = x * cosB - y2 * sinB;
+        const y3 = x * sinB + y2 * cosB;
+
+        return { x: torusCenter.x + x2, y: torusCenter.y + y3, z: z2 };
+      };
+
+      for (let ring = 0; ring < rings; ring += 1) {
+        const theta = (ring / rings) * Math.PI * 2;
+        const nextTheta = ((ring + 1) / rings) * Math.PI * 2;
+
+        for (let segment = 0; segment < segments; segment += 1) {
+          const phiValue = (segment / segments) * Math.PI * 2;
+          const nextPhiValue = ((segment + 1) / segments) * Math.PI * 2;
+
+          const p1 = projectPoint(theta, phiValue);
+          const p2 = projectPoint(theta, nextPhiValue);
+          const p3 = projectPoint(nextTheta, phiValue);
 
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p2.x, p2.y);
-          ctx.strokeStyle = `hsla(172, 66%, 50%, 0.04)`;
-          ctx.lineWidth = 0.6;
+          ctx.strokeStyle = "hsla(172, 66%, 50%, 0.028)";
+          ctx.lineWidth = 0.55;
           ctx.stroke();
 
           ctx.beginPath();
           ctx.moveTo(p1.x, p1.y);
           ctx.lineTo(p3.x, p3.y);
-          ctx.strokeStyle = `hsla(172, 66%, 50%, 0.04)`;
+          ctx.strokeStyle = "hsla(172, 66%, 50%, 0.028)";
+          ctx.lineWidth = 0.55;
           ctx.stroke();
         }
       }
-
-      animId = requestAnimationFrame(draw);
     };
 
-    draw();
+    const renderFrame = () => {
+      ctx.clearRect(0, 0, width, height);
+      drawDots();
+      drawCodeParticles();
+      drawIcosahedron();
+      drawTorus();
+    };
+
+    const animate = () => {
+      sceneTime += lowPower ? 0.004 : 0.006;
+      renderFrame();
+      animationFrame = window.requestAnimationFrame(animate);
+    };
+
+    const handleResize = () => {
+      buildScene();
+      renderFrame();
+    };
+
+    const handleVisibility = () => {
+      if (document.hidden && animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+        animationFrame = 0;
+      }
+
+      if (!document.hidden && !reducedMotion && !animationFrame) {
+        animationFrame = window.requestAnimationFrame(animate);
+      }
+    };
+
+    buildScene();
+    renderFrame();
+    window.addEventListener("resize", handleResize);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    if (!reducedMotion) {
+      animationFrame = window.requestAnimationFrame(animate);
+    }
 
     return () => {
-      cancelAnimationFrame(animId);
-      window.removeEventListener("resize", resize);
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+
+      window.removeEventListener("resize", handleResize);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 
-  return (
-    <canvas
-      ref={canvasRef}
-      className="fixed inset-0 z-0 pointer-events-none"
-      style={{ opacity: 1 }}
-    />
-  );
+  return <canvas ref={canvasRef} className="pointer-events-none fixed inset-0 z-0" aria-hidden="true" />;
 };
 
 export default CodeBackground3D;
