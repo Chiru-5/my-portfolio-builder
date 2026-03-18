@@ -1,105 +1,115 @@
-import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
 
-const skillIcons: Record<string, string> = {
-  Java: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
-  "C++": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
-  JavaScript: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
-  C: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/c/c-original.svg",
-  "HTML & CSS": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
-  Spring: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
-  "Spring Boot": "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
-  Maven: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/maven/maven-original.svg",
-  Postman: "https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg",
-  MySQL: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
-  GitHub: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
-  Figma: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
-};
-
-const skills = {
-  Languages: ["Java", "C++", "JavaScript", "C"],
-  Frameworks: ["HTML & CSS", "Spring", "Spring Boot"],
-  "Tools & Platforms": ["Maven", "Postman", "MySQL", "GitHub", "Figma"],
-  "Soft Skills": ["Collaboration", "Adaptability", "Flexibility", "Attention to Detail"],
-};
-
-const containerVariants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.1 } },
-};
-
-const cardVariants = {
-  hidden: { opacity: 0, y: 30, scale: 0.95 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-    transition: { duration: 0.5 },
+const technologies = [
+  {
+    name: "Java",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
   },
-};
+  {
+    name: "TypeScript",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
+  },
+  {
+    name: "JavaScript",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
+  },
+  {
+    name: "HTML5",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg",
+  },
+  {
+    name: "CSS3",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg",
+  },
+  {
+    name: "Spring Boot",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/spring/spring-original.svg",
+  },
+  {
+    name: "MySQL",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg",
+  },
+  {
+    name: "Postman",
+    icon: "https://www.vectorlogo.zone/logos/getpostman/getpostman-icon.svg",
+  },
+  {
+    name: "GitHub",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg",
+  },
+  {
+    name: "Maven",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/maven/maven-original.svg",
+  },
+  {
+    name: "Figma",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/figma/figma-original.svg",
+  },
+  {
+    name: "C++",
+    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg",
+  },
+] as const;
 
-const chipVariants = {
-  hidden: { opacity: 0, scale: 0.8 },
-  visible: { opacity: 1, scale: 1 },
+const rowOne = [...technologies, ...technologies];
+const rowTwo = [...[...technologies].reverse(), ...[...technologies].reverse()];
+
+interface SkillsMarqueeRowProps {
+  items: typeof rowOne;
+  reverse?: boolean;
+}
+
+const SkillsMarqueeRow = ({ items, reverse = false }: SkillsMarqueeRowProps) => {
+  return (
+    <div className="relative overflow-hidden rounded-[calc(var(--radius)+0.5rem)]">
+      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-14 bg-gradient-to-r from-background to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-14 bg-gradient-to-l from-background to-transparent" />
+
+      <div
+        className={cn(
+          "logo-marquee-track flex w-max items-center gap-4 py-3",
+          reverse && "logo-marquee-track-reverse"
+        )}
+      >
+        {items.map((tech, index) => (
+          <div
+            key={`${tech.name}-${index}`}
+            className="group flex min-w-[170px] items-center gap-3 rounded-2xl border border-border bg-secondary/80 px-5 py-4 shadow-[var(--shadow-card)] backdrop-blur-sm transition-transform duration-300 hover:-translate-y-1 hover:border-primary/30"
+          >
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-background/80 ring-1 ring-border">
+              <img
+                src={tech.icon}
+                alt={`${tech.name} logo`}
+                className="h-7 w-7 object-contain transition duration-300 group-hover:scale-110"
+                loading="lazy"
+                decoding="async"
+                referrerPolicy="no-referrer"
+              />
+            </div>
+            <span className="font-mono text-sm tracking-wide text-secondary-foreground">{tech.name}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 const SkillsSection = () => {
   return (
-    <section id="skills" className="py-24 px-4">
-      <div className="container">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <p className="font-mono text-primary text-sm tracking-widest uppercase mb-2">What I work with</p>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold mb-12">Skills & Technologies</h2>
-        </motion.div>
+    <section id="skills" className="px-4 py-24">
+      <div className="container space-y-8">
+        <div className="max-w-2xl space-y-3">
+          <p className="font-mono text-sm uppercase tracking-[0.24em] text-primary">Tech stack</p>
+          <h2 className="font-heading text-3xl font-bold md:text-4xl">Infinite scrolling skills with logos</h2>
+          <p className="text-muted-foreground">
+            A smooth, lightweight showcase of the tools and technologies I use to build clean full-stack products.
+          </p>
+        </div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true }}
-          className="grid md:grid-cols-2 gap-6"
-        >
-          {Object.entries(skills).map(([category, items]) => (
-            <motion.div
-              key={category}
-              variants={cardVariants}
-              whileHover={{ y: -4 }}
-              className="card-glass rounded-xl p-6 hover:border-primary/30 transition-colors duration-300"
-            >
-              <h3 className="font-heading font-semibold text-lg mb-4 text-primary">{category}</h3>
-              <motion.div
-                variants={containerVariants}
-                initial="hidden"
-                whileInView="visible"
-                viewport={{ once: true }}
-                className="flex flex-wrap gap-3"
-              >
-                {items.map((skill) => (
-                  <motion.span
-                    key={skill}
-                    variants={chipVariants}
-                    whileHover={{ scale: 1.08, y: -2 }}
-                    className="inline-flex items-center gap-2 px-3 py-2 text-sm font-mono rounded-md bg-secondary border border-border text-secondary-foreground cursor-default"
-                  >
-                    {skillIcons[skill] && (
-                      <img
-                        src={skillIcons[skill]}
-                        alt={skill}
-                        className="w-5 h-5 object-contain"
-                        loading="lazy"
-                      />
-                    )}
-                    {skill}
-                  </motion.span>
-                ))}
-              </motion.div>
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="space-y-4">
+          <SkillsMarqueeRow items={rowOne} />
+          <SkillsMarqueeRow items={rowTwo} reverse />
+        </div>
       </div>
     </section>
   );

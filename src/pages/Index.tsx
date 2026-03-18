@@ -9,7 +9,7 @@ import CodeBackground3D from "@/components/CodeBackground3D";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-background cursor-none">
+    <div className="custom-cursor-enabled min-h-screen bg-background">
       <CodeBackground3D />
       <CustomCursor />
       <Navbar />
