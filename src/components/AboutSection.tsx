@@ -109,7 +109,6 @@ const AboutSection = () => {
             </motion.div>
             <div>
               <h2 className="font-heading text-3xl font-bold md:text-4xl">Certificates</h2>
-              <p className="mt-2 text-sm text-muted-foreground">Auto-scrolling showcase with clickable certificate previews.</p>
             </div>
           </div>
           <CertificatesMarquee />
