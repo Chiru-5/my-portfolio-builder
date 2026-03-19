@@ -107,6 +107,19 @@
     border-radius: 3px;
   }
 
+  @media (pointer: fine) {
+    .custom-cursor-enabled,
+    .custom-cursor-enabled a,
+    .custom-cursor-enabled button,
+    .custom-cursor-enabled input,
+    .custom-cursor-enabled textarea,
+    .custom-cursor-enabled select,
+    .custom-cursor-enabled summary,
+    .custom-cursor-enabled [role='button'] {
+      cursor: none;
+    }
+  }
+
 }
 
 @layer utilities {
