@@ -8,11 +8,13 @@ const CustomCursor = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [isEnabled, setIsEnabled] = useState(false);
 
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+  const pointerX = useMotionValue(-100);
+  const pointerY = useMotionValue(-100);
 
-  const x = useSpring(cursorX, { damping: 28, stiffness: 420, mass: 0.35 });
-  const y = useSpring(cursorY, { damping: 28, stiffness: 420, mass: 0.35 });
+  const ringX = useSpring(pointerX, { damping: 30, stiffness: 260, mass: 0.7 });
+  const ringY = useSpring(pointerY, { damping: 30, stiffness: 260, mass: 0.7 });
+  const dotX = useSpring(pointerX, { damping: 24, stiffness: 520, mass: 0.3 });
+  const dotY = useSpring(pointerY, { damping: 24, stiffness: 520, mass: 0.3 });
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -30,15 +32,15 @@ const CustomCursor = () => {
     let nextY = -100;
 
     const flushPosition = () => {
-      cursorX.set(nextX);
-      cursorY.set(nextY);
+      pointerX.set(nextX);
+      pointerY.set(nextY);
       frame = 0;
     };
 
     const handleMove = (event: PointerEvent) => {
       nextX = event.clientX;
       nextY = event.clientY;
-      setIsVisible((current) => current || true);
+      setIsVisible(true);
 
       if (!frame) {
         frame = window.requestAnimationFrame(flushPosition);
@@ -52,12 +54,17 @@ const CustomCursor = () => {
 
     const handlePointerOver = (event: Event) => updateHoverState(event.target);
     const handlePointerOut = (event: PointerEvent) => updateHoverState(event.relatedTarget);
+    const handlePointerLeave = () => {
+      setIsVisible(false);
+      setIsHovering(false);
+    };
     const handleBlur = () => setIsVisible(false);
     const handleVisibility = () => setIsVisible(!document.hidden);
 
     document.addEventListener("pointermove", handleMove, { passive: true });
     document.addEventListener("pointerover", handlePointerOver);
     document.addEventListener("pointerout", handlePointerOut);
+    document.addEventListener("pointerleave", handlePointerLeave);
     window.addEventListener("blur", handleBlur);
     document.addEventListener("visibilitychange", handleVisibility);
 
@@ -65,6 +72,7 @@ const CustomCursor = () => {
       document.removeEventListener("pointermove", handleMove);
       document.removeEventListener("pointerover", handlePointerOver);
       document.removeEventListener("pointerout", handlePointerOut);
+      document.removeEventListener("pointerleave", handlePointerLeave);
       window.removeEventListener("blur", handleBlur);
       document.removeEventListener("visibilitychange", handleVisibility);
 
@@ -72,41 +80,39 @@ const CustomCursor = () => {
         window.cancelAnimationFrame(frame);
       }
     };
-  }, [cursorX, cursorY]);
+  }, [pointerX, pointerY]);
 
   if (!isEnabled) {
     return null;
   }
 
   return (
-    <motion.div
-      className="pointer-events-none fixed left-0 top-0 z-[9999] hidden md:block"
-      style={{ x, y, translateX: "-16%", translateY: "-8%" }}
-      animate={{
-        opacity: isVisible ? 1 : 0,
-        scale: isHovering ? 1.1 : 1,
-        rotate: isHovering ? -8 : 0,
-      }}
-      transition={{ type: "spring", stiffness: 380, damping: 28 }}
-      aria-hidden="true"
-    >
-      <div className="relative">
-        <svg
-          viewBox="0 0 28 28"
-          className="h-7 w-7 drop-shadow-[0_0_18px_hsl(var(--primary)/0.32)]"
-          fill="none"
-        >
-          <path
-            d="M4 3.5v18l5.6-5.2 4.1 8.2 3.1-1.6-4.2-8.1 7.9-.3L4 3.5Z"
-            fill="hsl(var(--foreground))"
-            stroke="hsl(var(--background))"
-            strokeWidth="1.4"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span className="absolute left-[8px] top-[9px] h-2.5 w-2.5 rounded-full bg-primary/80 shadow-[var(--shadow-glow)]" />
-      </div>
-    </motion.div>
+    <>
+      <motion.div
+        className="pointer-events-none fixed left-0 top-0 z-[9999] hidden rounded-full border border-foreground/30 bg-background/10 shadow-[var(--shadow-glow)] backdrop-blur-sm md:block"
+        style={{ x: ringX, y: ringY, translateX: "-50%", translateY: "-50%" }}
+        animate={{
+          opacity: isVisible ? 1 : 0,
+          width: isHovering ? 44 : 32,
+          height: isHovering ? 44 : 32,
+          scale: isHovering ? 1.08 : 1,
+        }}
+        transition={{ type: "spring", stiffness: 280, damping: 24 }}
+        aria-hidden="true"
+      />
+
+      <motion.div
+        className="pointer-events-none fixed left-0 top-0 z-[10000] hidden rounded-full bg-primary md:block"
+        style={{ x: dotX, y: dotY, translateX: "-50%", translateY: "-50%" }}
+        animate={{
+          opacity: isVisible ? 1 : 0,
+          width: isHovering ? 12 : 8,
+          height: isHovering ? 12 : 8,
+        }}
+        transition={{ type: "spring", stiffness: 520, damping: 28 }}
+        aria-hidden="true"
+      />
+    </>
   );
 };
 
