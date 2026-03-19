@@ -6,10 +6,6 @@ const technologies = [
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg",
   },
   {
-    name: "TypeScript",
-    icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg",
-  },
-  {
     name: "JavaScript",
     icon: "https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg",
   },
@@ -98,12 +94,8 @@ const SkillsSection = () => {
   return (
     <section id="skills" className="px-4 py-24">
       <div className="container space-y-8">
-        <div className="max-w-2xl space-y-3">
-          <p className="font-mono text-sm uppercase tracking-[0.24em] text-primary">Tech stack</p>
-          <h2 className="font-heading text-3xl font-bold md:text-4xl">Infinite scrolling skills with logos</h2>
-          <p className="text-muted-foreground">
-            A smooth, lightweight showcase of the tools and technologies I use to build clean full-stack products.
-          </p>
+        <div className="space-y-3">
+          <h2 className="font-mono text-sm uppercase tracking-[0.24em] text-primary">TECH STACK</h2>
         </div>
 
         <div className="space-y-4">
