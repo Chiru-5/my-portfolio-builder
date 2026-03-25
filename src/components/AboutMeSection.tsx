@@ -40,7 +40,7 @@ const AboutMeSection = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="text-muted-foreground leading-relaxed text-base md:text-lg max-w-2xl"
         >
-          A driven Computer Science student at Lovely Professional University with hands-on experience in Java, Spring Boot, and React. I enjoy architecting clean backend systems and pairing them with thoughtful, responsive interfaces. With 500+ DSA problems solved and multiple real-world projects shipped, I bring both depth and hustle to every line of code I write.
+          A driven Computer Science student at Lovely Professional University with hands-on experience in Java, Spring Boot, and React. I enjoy architecting clean backend systems and pairing them with thoughtful, responsive interfaces.
         </motion.p>
       </div>
     </section>
