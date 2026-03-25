@@ -13,7 +13,7 @@ const AboutMeSection = () => {
           className="mb-12"
         >
           <h2 className="font-heading text-4xl md:text-5xl font-bold uppercase tracking-tight">
-            About Me <span className="text-primary">/</span>
+            About Me
           </h2>
           <div className="mt-3 h-px w-full bg-border" />
         </motion.div>
@@ -40,7 +40,7 @@ const AboutMeSection = () => {
           transition={{ duration: 0.6, delay: 0.3 }}
           className="text-muted-foreground leading-relaxed text-base md:text-lg max-w-2xl"
         >
-          I specialize in building robust and scalable web applications by combining strong backend logic with intuitive frontend design. With a solid foundation in full-stack development, I create efficient, user-focused digital solutions that are both functional and seamless to use.
+          A driven Computer Science student at Lovely Professional University with hands-on experience in Java, Spring Boot, and React. I enjoy architecting clean backend systems and pairing them with thoughtful, responsive interfaces. With 500+ DSA problems solved and multiple real-world projects shipped, I bring both depth and hustle to every line of code I write.
         </motion.p>
       </div>
     </section>
