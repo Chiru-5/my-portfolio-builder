@@ -1,5 +1,6 @@
 import Navbar from "@/components/Navbar";
 import HeroSection from "@/components/HeroSection";
+import AboutMeSection from "@/components/AboutMeSection";
 import SkillsSection from "@/components/SkillsSection";
 import ProjectsSection from "@/components/ProjectsSection";
 import AboutSection from "@/components/AboutSection";
@@ -14,6 +15,7 @@ const Index = () => {
       <CustomCursor />
       <Navbar />
       <HeroSection />
+      <AboutMeSection />
       <SkillsSection />
       <ProjectsSection />
       <AboutSection />
